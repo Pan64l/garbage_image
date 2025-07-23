@@ -4,7 +4,7 @@ import re
 
 # === SETTINGS ===
 base_dir = "good_data"  # Folder containing class subfolders
-output_size = (2048, 2048)
+output_size = (1024, 1024)
 
 def is_renamed(filename, prefix):
     pattern = re.compile(rf"^{prefix}_\d{{3}}\.(jpg|JPG)$")
@@ -49,4 +49,20 @@ def process_images():
                 print(f"Failed to process {img_path}: {e}")
 
 if __name__ == "__main__":
-    process_images()
+        for img_name in image_files:
+            img_path = os.path.join(folder_path, img_name)
+            try:
+                img = Image.open(img_path)
+                img = img.resize(output_size, Image.LANCZOS)
+
+                new_name = f"{folder_name}_{next_idx:03d}.jpg"
+                new_path = os.path.join(folder_path, new_name)
+
+                img.save(new_path, "JPEG")
+                os.remove(img_path)
+
+                print(f"Processed: {img_name} -> {new_name}")
+                next_idx += 1
+
+            except Exception as e:
+                print(f"Failed to process {img_path}: {e}")
